@@ -14,7 +14,7 @@ server.listen(process.env.PORT || 3000);*/
 const http = require('http');
 const app = require('./app');
 
-const normalizePort = val => {
+const normalizePort = val => {  // la fonction normalizePort renvoie un port valide, qu'il soit fourni sous la forme d'un numéro ou d'une chaîne.
   const port = parseInt(val, 10);
 
   if (isNaN(port)) {
@@ -28,7 +28,7 @@ const normalizePort = val => {
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
-const errorHandler = error => {
+const errorHandler = error => { // la fonction errorHandler  recherche les différentes erreurs et les gère de manière appropriée. Elle est ensuite enregistrée dans le serveur.
   if (error.syscall !== 'listen') {
     throw error;
   }
@@ -48,7 +48,7 @@ const errorHandler = error => {
   }
 };
 
-const server = http.createServer(app);
+const server = http.createServer(app); // Création du serveur
 
 server.on('error', errorHandler);
 server.on('listening', () => {
@@ -57,4 +57,4 @@ server.on('listening', () => {
   console.log('Listening on ' + bind);
 });
 
-server.listen(port);
+server.listen(port);  // Configuration du serveur sur le port 3000 par défaut
