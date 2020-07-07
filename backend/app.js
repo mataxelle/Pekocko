@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
+const session = require('express-session');
 const helmet = require("helmet");
 
 const sauceRoutes = require('./routes/sauceRoute');
@@ -30,15 +31,30 @@ mongoose.connect('mongodb+srv://'+process.env.Mongo_Id+':'+process.env.Mongo_MP+
 
 ///////// middleware général //////// CORS
 app.use((req, res, next) => {                         // Ces headers permettent :
-    res.setHeader('Access-Control-Allow-Origin', '*'); // une connection autorisée pour tous le monde
-    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization'); // l'authorasation d'utiliser certains headers
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS'); // d'envoyer des requêtes avec les méthodes mentionnées
+    // une connection autorisée pour tous le monde
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    // l'authorasation d'utiliser certains headers
+    res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+    // d'envoyer des requêtes avec les méthodes mentionnées
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
     next();
 });
 
 
 app.use(bodyParser.json()); // Pour toutes les routes de l'application, bodyParser transformera le coprs de la requête en objet json utilisable
 
+
+// Paramétrer les cookies
+app.set('trust proxy', 1) // trust first proxy
+app.use( session({
+   secret : 's3Cur3',
+   name : 'sessionId',
+   cookie: { 
+       secure: true,
+       httpOnly: true } // True est recommandé
+  })
+);
+  
 
 ////////// Chemin d'accès des endpoints ////////
 app.use('/images', express.static(path.join(__dirname, 'images')));
