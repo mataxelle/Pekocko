@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
 
-const session = require('express-session');
 const helmet = require("helmet");
 
 const sauceRoutes = require('./routes/sauceRoute');
@@ -43,17 +42,6 @@ app.use((req, res, next) => {                         // Ces headers permettent 
 
 app.use(bodyParser.json()); // Pour toutes les routes de l'application, bodyParser transformera le coprs de la requête en objet json utilisable
 
-
-// Paramétrer les cookies
-app.set('trust proxy', 1) // trust first proxy
-app.use( session({
-   secret : 's3Cur3',
-   name : 'sessionId',
-   cookie: { 
-       secure: true,
-       httpOnly: true } // True est recommandé
-  })
-);
   
 
 ////////// Chemin d'accès des endpoints ////////

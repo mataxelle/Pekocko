@@ -6,6 +6,7 @@ const fs = require('fs');  // Ce package de node permet de supprimer un fichier 
 exports.createSauce = (req, res, next) => {
     const sauceObject = JSON.parse(req.body.sauce);
     delete sauceObject._id;
+    console.log(sauceObject)
     const sauce = new Sauce({
         ...sauceObject,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
@@ -72,11 +73,11 @@ exports.likeOrDislike = (req, res, next) => {
                     break;
 
                 case 0:                          // Si userId supprime son like ou son dislike, décrémentation des tableaux
-                    if (sauce.usersLiked.includes(userId)) {
+                    if (!sauce.usersLiked.includes(userId)) {
                         sauce.updateOne({ _id: req.params.id }, { $inc: {likes: -1}, $pull: {usersLiked: userId}, _id: req.params.id} )
                         .then(() => res.status(201).json({ message: 'Vote supprimé !' }))
                         .catch(error => res.status(400).json({ error }));
-                    } else if (sauce.usersDisliked.includes(userId)) {
+                    } else if (!sauce.usersDisliked.includes(userId)) {
                         sauce.updateOne({ _id: req.params.id }, { $inc: {dislikes: -1}, $pull: {usersDisliked: userId} , _id: req.params.id})
                         .then(() => res.status(201).json({ message: 'Vote supprimé !' }))
                         .catch(error => res.status(400).json({ error }));
@@ -84,8 +85,8 @@ exports.likeOrDislike = (req, res, next) => {
                     break;
 
                 case -1:                         // Si userId supprime son like, incrémentaion +1 dans la tableau dislike
-                    if (sauce.usersLiked.includes(userId)) {
-                        sauce.updateOne({ _id: req.params.id }, { $inc: {dislikes: 1}}, { $push: {usersLiked: userId}, _id: req.params.id})
+                    if (!sauce.usersLiked.includes(userId)) {
+                        sauce.updateOne({ _id: req.params.id }, { $inc: {dislikes: 1}}, { $push: {usersdisliked: userId}, _id: req.params.id})
                         .then(() => res.status(201).json({ message: 'Dislike ajouté !' }))
                         .catch(error => res.status(400).json({ error }));
                     }
