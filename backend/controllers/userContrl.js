@@ -1,11 +1,27 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userSchema');
+const emailValidator = require('email-validator');
+const passwordValidator = require('password-validator');
+
+const schema = new passwordValidator(); // Création d'un schéma pour la validitée du mp
+
+schema
+.is().min(7)
+.is().max(20)
+.has().uppercase()
+.has().lowercase()
+.has().digits()
+.has().symbols()
+.has().not().spaces();
 
 
 
 exports.signup = (req, res, next) => {
-    bcrypt.hash(req.body.password, 10)  // La fonction de hachage de bcrypt permet de « saler » le mot de passe 10 fois, plus l'exécution de la fonction sera longue, et plus le hachage sera sécurisé
+    if (!emailValidator.validate(req.body.email) || !schema.validate(req.body.password)) { // Vérifie si valide
+        throw { error: 'Attention, veuillez utiliser un email et un pot de passe valide !' }
+    } else {
+        bcrypt.hash(req.body.password, 10)  // La fonction de hachage de bcrypt permet de « saler » le mot de passe 10 fois, plus l'exécution de la fonction sera longue, et plus le hachage sera sécurisé
     .then(hash => {   // La fonction asynchrone renvoie une Promise dans laquelle nous recevons le hash généré
         const user = new User({    //  Création d'un utilisateur qui sera ensuite enregistré dans la base de données
             email: req.body.email,
@@ -16,6 +32,7 @@ exports.signup = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
     })
     .catch(error => res.status(500).json({ error }));
+    }//}
 };
 
 exports.login = (req, res, next) => {
@@ -33,7 +50,7 @@ exports.login = (req, res, next) => {
                 userId: user._id,
                 token: jwt.sign(       // la fonction sign de jsonwebtoken encode un nouveau token
                     { userId: user._id },
-                    process.env.Token,    // Clé token
+                    process.env.S_TOKEN,    // Clé token
                     { expiresIn: '8h'}    // Durée de validité du token. L'utilisateur devra se reconnecter au bout de 4h
                 )
             });

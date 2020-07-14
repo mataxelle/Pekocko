@@ -56,6 +56,8 @@ exports.getAllSauces = (req, res, next) => {
         .catch(error => res.status(400).json({ error }));
 };
 
+
+// Appréciations
 exports.likeOrDislike = (req, res, next) => {
 
     const userId = req.body.userId;
