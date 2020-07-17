@@ -4,12 +4,12 @@ const fs = require('fs');  // Ce package de node permet de supprimer un fichier 
 
 // Création d'une sauce
 exports.createSauce = (req, res, next) => {
-    const sauceObject = JSON.parse(req.body.sauce);
-    delete sauceObject._id;
+    const sauceObject = JSON.parse(req.body.sauce); // Analyser le coprs de la requête à l'aide de JSON.parse() pour obtenir un objet utilisable
+    delete sauceObject._id; // Suppression du corps id car il sera généré par mongoose
     console.log(sauceObject)
     const sauce = new Sauce({
-        ...sauceObject,
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+        ...sauceObject,    // L'opérateur spread ... est utilisé pour faire une copie de tous les éléments de req.body
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`  // Url de l'image
     });
     sauce.save()  // Cette méthode enregistre l'objet Sauce dans la base et retourne un promise
         .then(() => res.status(201).json({ message: 'Sauce enregistrée !' }))

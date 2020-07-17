@@ -5,7 +5,7 @@ const path = require('path');
 
 const helmet = require("helmet");
 
-const sauceRoutes = require('./routes/sauceRoute');
+const sauceRoutes = require('./routes/sauceRoute');  // Importation du routeur sauce
 const userRoutes = require('./routes/userRoute');
 
 const app = express();
@@ -28,7 +28,7 @@ mongoose.connect('mongodb+srv://'+process.env.Mongo_Id+':'+process.env.Mongo_MP+
     .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 
-///////// middleware général //////// CORS
+///////// middleware général //////// CORS /// pour s'assurer que le front-end effectue des appels vers l'application en toute sécurité.
 app.use((req, res, next) => {                         // Ces headers permettent :
     // une connection autorisée pour tous le monde
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -45,7 +45,7 @@ app.use(bodyParser.json()); // Pour toutes les routes de l'application, bodyPars
   
 
 ////////// Chemin d'accès des endpoints ////////
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use('/images', express.static(path.join(__dirname, 'images'))); // Indique à Express qu'il faut gérer la ressource images de manière statique
 
 app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
